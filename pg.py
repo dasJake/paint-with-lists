@@ -19,14 +19,12 @@ class PlanningView(arcade.Window):
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
 
         self.karo_sprites = arcade.SpriteList()
-        self.karo_koordinaten = []
-        for col in range(0, config.SCREEN_WIDTH, config.GRID_SIZE):
-            self.karo_koordinaten.append([])
-            for row in range(0, config.SCREEN_HEIGHT, config.GRID_SIZE):
-                self.karo_koordinaten[col//config.GRID_SIZE].append("0")
 
+        self.karo_koordinaten = numpy.empty(
+            (config.SCREEN_WIDTH // config.GRID_SIZE,
+                config.SCREEN_HEIGHT // config.GRID_SIZE),
+            arcade.BasicSprite)
 
-        # Create a list of solid-color sprites to represent each grid location
         self.shapelist = arcade.shape_list.ShapeElementList()
         self.gridline_points = self.create_gridlines_points()
         self.shapelist.append(arcade.shape_list.create_lines(self.gridline_points, arcade.color.AMARANTH_PINK))
@@ -68,9 +66,9 @@ class PlanningView(arcade.Window):
         print(f"koordinateninhalt: {self.karo_koordinaten[column][row]}")
 
         karo_unter_maus = self.karo_koordinaten[column][row]
-        if karo_unter_maus != "0":
+        if karo_unter_maus:
             karo_unter_maus.kill()
-            self.karo_koordinaten[column][row] = "0"
+            self.karo_koordinaten[column][row] = None
 
         else:
             karo = arcade.SpriteSolidColor(
