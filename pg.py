@@ -36,6 +36,8 @@ class PlanningView(arcade.Window):
                 self.grid_sprite_list.append(sprite)
                 self.grid_sprites[row].append(sprite)
 
+        self.shapelist = arcade.shape_list.ShapeElementList()
+        self.shapelist.append(arcade.shape_list.create_lines([(1, 2), (40, 50), (100, 200), (300, 350)], arcade.color.AMARANTH_PINK))
 
     def setup(self):
         pass
@@ -43,7 +45,8 @@ class PlanningView(arcade.Window):
     def on_draw(self):
         self.clear()
 
-        self.grid_sprite_list.draw()
+        #self.grid_sprite_list.draw()
+        self.shapelist.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
         row = int(y // (config.HEIGHT + config.MARGIN))
