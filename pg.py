@@ -1,6 +1,7 @@
 import os
 import sys
 import arcade
+import numpy
 
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, "src")
@@ -17,7 +18,13 @@ class PlanningView(arcade.Window):
 
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
 
-        self.grid_sprites = []
+        self.karo_sprites = arcade.SpriteList()
+        self.karo_koordinaten = []
+        for col in range(0, config.SCREEN_WIDTH, config.GRID_SIZE):
+            self.karo_koordinaten.append([])
+            for row in range(0, config.SCREEN_HEIGHT, config.GRID_SIZE):
+                self.karo_koordinaten[col//config.GRID_SIZE].append("0")
+
 
         # Create a list of solid-color sprites to represent each grid location
         self.shapelist = arcade.shape_list.ShapeElementList()
@@ -49,13 +56,34 @@ class PlanningView(arcade.Window):
     def on_draw(self):
         self.clear()
 
+        self.karo_sprites.draw()
         self.shapelist.draw()
 
-    def on_mouse_press(self, x, y, button, modifiers):
-        row = int(y * (config.SCREEN_HEIGHT // config.GRID_SIZE))
-        column = int(config.SCREEN_WIDTH // x)
 
-        print(f"Click coordinates: ({x}, {y}). Grid coordinates: ({config.SCREEN_HEIGHT}, {config.SCREEN_WIDTH})")
+    def on_mouse_press(self, x, y, button, modifiers):
+        column = int(x // config.GRID_SIZE)
+        row = int(y // config.GRID_SIZE)
+
+        print(f"Click coordinates: ({x}, {y}). Grid coordinates: ({column}, {row})")
+        print(f"koordinateninhalt: {self.karo_koordinaten[column][row]}")
+
+        karo_unter_maus = self.karo_koordinaten[column][row]
+        if karo_unter_maus != "0":
+            karo_unter_maus.kill()
+            self.karo_koordinaten[column][row] = "0"
+
+        else:
+            karo = arcade.SpriteSolidColor(
+                config.GRID_SIZE,
+                config.GRID_SIZE,
+                self.karomitte_berechnen(column),
+                self.karomitte_berechnen(row),
+                arcade.color.WHITE)
+            self.karo_sprites.append(karo)
+            self.karo_koordinaten[column][row] = karo
+
+    def karomitte_berechnen(self, i):
+        return i * config.GRID_SIZE + config.GRID_SIZE / 2
 
 def main():
     window = PlanningView()
