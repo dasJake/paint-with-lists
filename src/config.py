@@ -10,18 +10,8 @@ _RESOURCE_PATH = os.path.join(
 
 DEBUG = not _IS_BUNDLED
 
-# Set how many rows and columns the grid will have
-ROW_COUNT = 15
-COLUMN_COUNT = 15
-
-# This sets the WIDTH and HEIGHT of each grid square
-WIDTH = 30
-HEIGHT = 30
-
-# This sets the margin between each cell
-# and on the edges of the screen.
-MARGIN = 5
-
-SCREEN_WIDTH = (WIDTH + MARGIN) * COLUMN_COUNT + MARGIN
-SCREEN_HEIGHT = (HEIGHT + MARGIN) * ROW_COUNT + MARGIN
+SCREEN_WIDTH = 810
+SCREEN_HEIGHT = 600
 SCREEN_TITLE = f"Planning Garden (v{version.VERSION})"
+
+GRID_SIZE = 30

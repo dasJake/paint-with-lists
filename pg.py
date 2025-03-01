@@ -14,30 +14,34 @@ import config
 class PlanningView(arcade.Window):
     def __init__(self):
         super().__init__(config.SCREEN_WIDTH, config.SCREEN_HEIGHT, config.SCREEN_TITLE)
+
         self.background_color = arcade.csscolor.CORNFLOWER_BLUE
 
-        # One dimensional list of all sprites in the two-dimensional sprite list
-        self.grid_sprite_list = arcade.SpriteList()
-
-        # This will be a two-dimensional grid of sprites to mirror the two
-        # dimensional grid of numbers. This points to the SAME sprites that are
-        # in grid_sprite_list, just in a 2d manner.
         self.grid_sprites = []
 
         # Create a list of solid-color sprites to represent each grid location
-        for row in range(config.ROW_COUNT):
-            self.grid_sprites.append([])
-            for column in range(config.COLUMN_COUNT):
-                x = column * (config.WIDTH + config.MARGIN) + (config.WIDTH / 2 + config.MARGIN)
-                y = row * (config.HEIGHT + config.MARGIN) + (config.HEIGHT / 2 + config.MARGIN)
-                sprite = arcade.SpriteSolidColor(config.WIDTH, config.HEIGHT, arcade.color.WHITE)
-                sprite.center_x = x
-                sprite.center_y = y
-                self.grid_sprite_list.append(sprite)
-                self.grid_sprites[row].append(sprite)
-
         self.shapelist = arcade.shape_list.ShapeElementList()
-        self.shapelist.append(arcade.shape_list.create_lines([(1, 2), (40, 50), (100, 200), (300, 350)], arcade.color.AMARANTH_PINK))
+        self.gridline_points = self.create_gridlines_points()
+        self.shapelist.append(arcade.shape_list.create_lines(self.gridline_points, arcade.color.AMARANTH_PINK))
+
+
+    def create_gridlines_points(self):
+    #def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
+        gridline_points = []
+
+        #gridline_points: List[Tuple[int | float, int | float]] = []
+
+        # Generate vertical grid lines
+        for i in range(0, config.SCREEN_WIDTH + 1, config.GRID_SIZE):
+            gridline_points.append((i, 0))  # Start point of vertical line
+            gridline_points.append((i, config.SCREEN_HEIGHT))  # End point of vertical line
+
+        # Generate horizontal grid lines
+        for j in range(0, config.SCREEN_HEIGHT + 1, config.GRID_SIZE):
+            gridline_points.append((0, j))  # Start point of horizontal line
+            gridline_points.append((config.SCREEN_WIDTH, j))  # End point of horizontal line
+
+        return gridline_points
 
     def setup(self):
         pass
@@ -45,20 +49,13 @@ class PlanningView(arcade.Window):
     def on_draw(self):
         self.clear()
 
-        #self.grid_sprite_list.draw()
         self.shapelist.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
-        row = int(y // (config.HEIGHT + config.MARGIN))
-        column = int(x // (config.WIDTH + config.MARGIN))
+        row = int(y * (config.SCREEN_HEIGHT // config.GRID_SIZE))
+        column = int(config.SCREEN_WIDTH // x)
 
-        print(f"Click coordinates: ({x}, {y}). Grid coordinates: ({row}, {column})")
-
-        if self.grid_sprites[row][column].color == arcade.color.WHITE:
-            self.grid_sprites[row][column].color = arcade.color.ALABAMA_CRIMSON
-
-        else:
-            self.grid_sprites[row][column].color = arcade.color.AIR_FORCE_BLUE
+        print(f"Click coordinates: ({x}, {y}). Grid coordinates: ({config.SCREEN_HEIGHT}, {config.SCREEN_WIDTH})")
 
 def main():
     window = PlanningView()
