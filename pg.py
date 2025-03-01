@@ -2,14 +2,13 @@ import os
 import sys
 import arcade
 import numpy
+from typing import List, Tuple
 
 script_dir = os.path.dirname(__file__)
 mymodule_dir = os.path.join(script_dir, "src")
 sys.path.append(mymodule_dir)
 
 import config
-
-
 
 
 class PlanningView(arcade.Window):
@@ -29,12 +28,8 @@ class PlanningView(arcade.Window):
         self.gridline_points = self.create_gridlines_points()
         self.shapelist.append(arcade.shape_list.create_lines(self.gridline_points, arcade.color.AMARANTH_PINK))
 
-
-    def create_gridlines_points(self):
-    #def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
-        gridline_points = []
-
-        #gridline_points: List[Tuple[int | float, int | float]] = []
+    def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
+        gridline_points: List[Tuple[int | float, int | float]] = []
 
         # Generate vertical grid lines
         for i in range(0, config.SCREEN_WIDTH + 1, config.GRID_SIZE):
@@ -56,7 +51,6 @@ class PlanningView(arcade.Window):
 
         self.karo_sprites.draw()
         self.shapelist.draw()
-
 
     def on_mouse_press(self, x, y, button, modifiers):
         column = int(x // config.GRID_SIZE)
@@ -82,6 +76,7 @@ class PlanningView(arcade.Window):
 
     def karomitte_berechnen(self, i):
         return i * config.GRID_SIZE + config.GRID_SIZE / 2
+
 
 def main():
     window = PlanningView()
