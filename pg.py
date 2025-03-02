@@ -24,9 +24,9 @@ class PlanningView(arcade.Window):
                 config.SCREEN_HEIGHT // config.GRID_SIZE),
             arcade.BasicSprite)
 
-        self.shapelist = arcade.shape_list.ShapeElementList()
+        self.gitternetz = arcade.shape_list.ShapeElementList()
         self.gridline_points = self.create_gridlines_points()
-        self.shapelist.append(arcade.shape_list.create_lines(self.gridline_points, arcade.color.AMARANTH_PINK))
+        self.gitternetz.append(arcade.shape_list.create_lines(self.gridline_points, arcade.color.AMARANTH_PINK))
 
         self.highlight_karo_x = 10
         self.highlight_karo_y = 10
@@ -52,8 +52,7 @@ class PlanningView(arcade.Window):
         self.clear()
 
         self.karo_sprites.draw()
-        self.shapelist.draw()
-
+        self.gitternetz.draw()
         arcade.draw_lbwh_rectangle_outline(
             self.highlight_karo_x,
             self.highlight_karo_y,
