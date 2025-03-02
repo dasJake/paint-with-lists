@@ -28,6 +28,8 @@ class PlanningView(arcade.Window):
         self.gridline_points = self.create_gridlines_points()
         self.shapelist.append(arcade.shape_list.create_lines(self.gridline_points, arcade.color.AMARANTH_PINK))
 
+        self.highlight_karo_x = 10
+        self.highlight_karo_y = 10
     def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
         gridline_points: List[Tuple[int | float, int | float]] = []
 
@@ -52,12 +54,17 @@ class PlanningView(arcade.Window):
         self.karo_sprites.draw()
         self.shapelist.draw()
 
+        arcade.draw_lbwh_rectangle_outline(
+            self.highlight_karo_x,
+            self.highlight_karo_y,
+            config.GRID_SIZE, config.GRID_SIZE,
+            arcade.color.AUREOLIN)
     def on_mouse_press(self, x, y, button, modifiers):
         column = int(x // config.GRID_SIZE)
         row = int(y // config.GRID_SIZE)
 
         print(f"Click coordinates: ({x}, {y}). Grid coordinates: ({column}, {row})")
-        print(f"koordinateninhalt: {self.karo_koordinaten[column][row]}")
+        print(f"highligh: {self.highlight_karo_x} | {self.highlight_karo_y}")
 
         karo_unter_maus = self.karo_koordinaten[column][row]
         if karo_unter_maus:
@@ -73,6 +80,12 @@ class PlanningView(arcade.Window):
                 arcade.color.WHITE)
             self.karo_sprites.append(karo)
             self.karo_koordinaten[column][row] = karo
+
+    def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        column = int(x // config.GRID_SIZE)
+        row = int(y // config.GRID_SIZE)
+        self.highlight_karo_x = column * config.GRID_SIZE
+        self.highlight_karo_y = row * config.GRID_SIZE
 
     def karomitte_berechnen(self, i):
         return i * config.GRID_SIZE + config.GRID_SIZE / 2
