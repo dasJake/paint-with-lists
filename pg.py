@@ -2,6 +2,7 @@ import os
 import sys
 import arcade
 import numpy
+import math
 from typing import List, Tuple
 
 script_dir = os.path.dirname(__file__)
@@ -30,6 +31,8 @@ class PlanningView(arcade.Window):
 
         self.highlight_karo_x = 10
         self.highlight_karo_y = 10
+        self.highlight_sichtbar = False
+
     def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
         gridline_points: List[Tuple[int | float, int | float]] = []
 
@@ -53,11 +56,13 @@ class PlanningView(arcade.Window):
 
         self.karo_sprites.draw()
         self.gitternetz.draw()
-        arcade.draw_lbwh_rectangle_outline(
-            self.highlight_karo_x,
-            self.highlight_karo_y,
-            config.GRID_SIZE, config.GRID_SIZE,
-            arcade.color.AUREOLIN)
+        if self.highlight_sichtbar:
+            arcade.draw_lbwh_rectangle_outline(
+                self.highlight_karo_x,
+                self.highlight_karo_y,
+                config.GRID_SIZE, config.GRID_SIZE,
+                arcade.color.AUREOLIN)
+
     def on_mouse_press(self, x, y, button, modifiers):
         column = int(x // config.GRID_SIZE)
         row = int(y // config.GRID_SIZE)
@@ -80,11 +85,44 @@ class PlanningView(arcade.Window):
             self.karo_sprites.append(karo)
             self.karo_koordinaten[column][row] = karo
 
+            print(f"spritelist:\n{len(self.karo_sprites)}")
+
+
+    def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int):
+        prev_x, prev_y = x - dx, y - dy
+
+        # Number of interpolation steps (adjust factor to tweak sampling rate)
+        steps = max(abs(dx), abs(dy)) // (config.GRID_SIZE // 2)  # Sample every half-grid step
+        steps = max(1, math.ceil(steps))  # Avoid zero division
+
+        for i in range(steps + 1):
+            # Linearly interpolate between previous and current position
+            sample_x = prev_x + (x - prev_x) * (i / steps)
+            sample_y = prev_y + (y - prev_y) * (i / steps)
+
+            column = int(sample_x // config.GRID_SIZE)
+            row = int(sample_y // config.GRID_SIZE)
+
+            if not self.karo_koordinaten[column][row]:  # Avoid duplicates
+                karo = arcade.SpriteSolidColor(
+                    config.GRID_SIZE,
+                    config.GRID_SIZE,
+                    self.karomitte_berechnen(column),
+                    self.karomitte_berechnen(row),
+                    arcade.color.WHITE
+                )
+                self.karo_sprites.append(karo)
+                self.karo_koordinaten[column][row] = karo
+
+                print(f"spritelist:\n{len(self.karo_sprites)}")
+
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
         column = int(x // config.GRID_SIZE)
         row = int(y // config.GRID_SIZE)
         self.highlight_karo_x = column * config.GRID_SIZE
         self.highlight_karo_y = row * config.GRID_SIZE
+        self.highlight_sichtbar = True
+
 
     def karomitte_berechnen(self, i):
         return i * config.GRID_SIZE + config.GRID_SIZE / 2
