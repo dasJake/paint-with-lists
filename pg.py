@@ -37,6 +37,7 @@ class PlanningView(arcade.Window):
         self.listenfensters = arcade.SpriteList()
 
         self.c_gedrueckt = False
+
     def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
         gridline_points: List[Tuple[int | float, int | float]] = []
 
@@ -68,6 +69,7 @@ class PlanningView(arcade.Window):
                 arcade.color.AUREOLIN)
 
         self.listenfensters.draw()
+
     def on_mouse_press(self, x, y, button, modifiers):
         column = int(x // config.GRID_SIZE)
         row = int(y // config.GRID_SIZE)
@@ -140,6 +142,7 @@ class PlanningView(arcade.Window):
     def on_key_release(self, symbol: int, modifiers: int):
         if symbol == arcade.key.C:
             self.c_gedrueckt = False
+
     def karomitte_berechnen(self, i):
         return i * config.GRID_SIZE + config.GRID_SIZE / 2
 
