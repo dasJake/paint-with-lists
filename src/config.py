@@ -10,8 +10,8 @@ _RESOURCE_PATH = os.path.join(
 
 DEBUG = not _IS_BUNDLED
 
-SCREEN_WIDTH = 810
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = f"Planning Garden (v{version.VERSION})"
+GRID_SIZE = 15
 
-GRID_SIZE = 30
+SCREEN_WIDTH = 70 * GRID_SIZE
+SCREEN_HEIGHT = 40 * GRID_SIZE
+SCREEN_TITLE = f"Planning Garden (v{version.VERSION})"
