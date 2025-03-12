@@ -10,6 +10,7 @@ mymodule_dir = os.path.join(script_dir, "src")
 sys.path.append(mymodule_dir)
 
 import config
+from listensprite import ListenSprite
 
 
 class PlanningView(arcade.Window):
@@ -33,6 +34,9 @@ class PlanningView(arcade.Window):
         self.highlight_karo_y = 10
         self.highlight_sichtbar = False
 
+        self.listenfensters = arcade.SpriteList()
+
+        self.c_gedrueckt = False
     def create_gridlines_points(self) -> List[Tuple[int | float, int | float]]:
         gridline_points: List[Tuple[int | float, int | float]] = []
 
@@ -63,6 +67,7 @@ class PlanningView(arcade.Window):
                 config.GRID_SIZE, config.GRID_SIZE,
                 arcade.color.AUREOLIN)
 
+        self.listenfensters.draw()
     def on_mouse_press(self, x, y, button, modifiers):
         column = int(x // config.GRID_SIZE)
         row = int(y // config.GRID_SIZE)
@@ -87,6 +92,11 @@ class PlanningView(arcade.Window):
 
             print(f"spritelist:\n{len(self.karo_sprites)}")
 
+            if self.c_gedrueckt:
+                listenfenster = ListenSprite(x, y)
+                self.listenfensters.append(listenfenster)
+
+                print(f"listenfenster:\n{len(self.listenfensters)}")
 
     def on_mouse_drag(self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int):
         prev_x, prev_y = x - dx, y - dy
@@ -123,7 +133,13 @@ class PlanningView(arcade.Window):
         self.highlight_karo_y = row * config.GRID_SIZE
         self.highlight_sichtbar = True
 
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.C:
+            self.c_gedrueckt = True
 
+    def on_key_release(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.C:
+            self.c_gedrueckt = False
     def karomitte_berechnen(self, i):
         return i * config.GRID_SIZE + config.GRID_SIZE / 2
 
